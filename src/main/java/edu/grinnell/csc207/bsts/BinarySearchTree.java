@@ -1,5 +1,6 @@
 package edu.grinnell.csc207.bsts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -122,6 +123,18 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 
     ///// Part 2: Ordered Traversals
 
+    public void StrHelper(StringBuffer newBuf, Node<T> branch){
+        if(branch==null){
+            return;
+        }
+
+        StrHelper(newBuf, branch.left);
+
+        newBuf.append(", "); 
+        newBuf.append(branch.value); 
+        StrHelper(newBuf, branch.right);
+    }
+
     /**
      * recursively process the left-hand subtree, visit the value at the node,
      * recursively process teh right-hand subtree.
@@ -142,23 +155,33 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
         }
     }
 
-    public void StrHelper(StringBuffer newBuf, Node<T> branch){
+
+
+
+
+    public void toListHelper(List<T> newList, Node<T> branch){
         if(branch==null){
             return;
         }
-
-        StrHelper(newBuf, branch.left);
-
-        newBuf.append(", "); 
-        newBuf.append(branch.value); 
-        StrHelper(newBuf, branch.right);
+        toListHelper(newList, branch.left);
+        newList.add(branch.value); 
+        toListHelper(newList, branch.right);
     }
-
+    
     /**
      * @return a list contains the elements of this BST in-order.
      */
     public List<T> toList() {
-        throw new UnsupportedOperationException();
+        List<T> newList = new ArrayList<>();
+        if(root == null){
+            return null;
+        }
+        else{
+            toListHelper(newList, root.left);
+            newList.add(root.value);
+            toListHelper(newList, root.right);
+            return newList;
+        }
     }
 
     ///// Part 3: BST Sorting

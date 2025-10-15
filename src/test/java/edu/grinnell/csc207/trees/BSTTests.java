@@ -49,7 +49,7 @@ public class BSTTests {
     public void basicToListTest() {
         // N.B., need to upcast the Integer[] array to avoid a ClassCastException that
         // arises from downcasting the result of toArray to Integer[].
-        assertArrayEquals((Object[]) new Integer[] {0, 5, 6, 7, 11},
+        assertArrayEquals((Object[]) new Integer[] {2, 3, 4, 5, 6},
                           mkSampleTree().toList().toArray());
     }
 

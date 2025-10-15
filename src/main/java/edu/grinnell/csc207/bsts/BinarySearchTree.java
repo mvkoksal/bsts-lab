@@ -8,6 +8,12 @@ import java.util.List;
 public class BinarySearchTree<T extends Comparable<? super T>> {
 
     ///// From the reading
+    /// 
+    /// 
+    /// 
+    
+
+
 
     /**
      * A node of the binary search tree.
@@ -45,6 +51,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
         root = null;
     }
 
+
     /**
      * @param node the root of the tree
      * @return the number of elements in the specified tree
@@ -64,31 +71,87 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
         return sizeH(root);
     }
 
+
+    /** @return the updated tree after inserting h into the given tree */
+    private Node<T> insertH(T v, Node<T> cur) {
+        if (cur == null) {
+            return new Node<>(v);
+        } else {
+            if (v.compareTo(cur.value) < 0) {
+                cur.left = insertH(v, cur.left);
+            } else {
+                cur.right = insertH(v, cur.right);
+            }
+            return cur;
+        }
+    }
+
     /**
      * @param value the value to add to the tree
      */
     public void insert(T value) {
-        throw new UnsupportedOperationException();
+        root = insertH(value, root);
     }
 
     ///// Part 1: Contains
    
+    // If the v is equal to the value of the Node, return true. 
+    // Else if v is less than the value, recursively search the left branch.
+    // Else recursively search the right branch.
+
     /**
      * @param v the value to find
      * @return true iff this tree contains <code>v</code>
      */
+
+    public boolean containsHelper(T v, Node<T> branch) {
+        if (branch == null) {
+            return false;
+        } else if (v == branch.value) {
+            return true;
+        } else if (v.compareTo(branch.value) < 0) {
+            return containsHelper(v, branch.left);
+        } else {
+            return containsHelper(v, branch.right);
+        }
+    }
+    
     public boolean contains(T v) {
-        throw new UnsupportedOperationException();
+        return containsHelper(v, root);
     }
 
     ///// Part 2: Ordered Traversals
 
     /**
+     * recursively process the left-hand subtree, visit the value at the node,
+     * recursively process teh right-hand subtree.
      * @return the (linearized) string representation of this BST
      */
     @Override
     public String toString() {
-        throw new UnsupportedOperationException();
+        StringBuffer newBuf = new StringBuffer("[");
+        if(root == null){
+            return "[]";
+        }
+        else{
+            StrHelper(newBuf, root.left);
+            newBuf.append(root.value);
+            StrHelper(newBuf, root.right);
+            newBuf.append("]");
+            return newBuf.toString();
+        }
+    }
+
+    public void StrHelper(StringBuffer newBuf, Node<T> branch){
+        if(branch==null){
+            return;
+        }
+
+        StrHelper(newBuf, branch.left);
+
+        newBuf.append(", "); 
+        newBuf.append(branch.value); 
+        StrHelper(newBuf, branch.right);
     }
 
     /**

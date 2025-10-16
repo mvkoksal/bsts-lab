@@ -123,16 +123,15 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 
     ///// Part 2: Ordered Traversals
 
-    public void StrHelper(StringBuffer newBuf, Node<T> branch){
-        if(branch==null){
-            return;
+    public void toStringHelper(Node<T> node, StringBuffer buf){
+       if (node != null) {
+            toStringHelper(node.left, buf);
+            if(buf.toString().length() > 1){
+                buf.append(", ");
+            }
+            buf.append(node.value);
+            toStringHelper(node.right, buf);
         }
-
-        StrHelper(newBuf, branch.left);
-
-        newBuf.append(", "); 
-        newBuf.append(branch.value); 
-        StrHelper(newBuf, branch.right);
     }
 
     /**
@@ -142,30 +141,23 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      */
     @Override
     public String toString() {
-        StringBuffer newBuf = new StringBuffer("[");
-        if(root == null){
-            return "[]";
-        }
-        else{
-            StrHelper(newBuf, root.left);
-            newBuf.append(root.value);
-            StrHelper(newBuf, root.right);
-            newBuf.append("]");
-            return newBuf.toString();
-        }
+        if(root != null){
+            StringBuffer buf = new StringBuffer("[");
+            toStringHelper(root, buf);
+            buf.append("]");
+            return buf.toString();
+        } else{return "[]";}
     }
 
 
 
 
-
     public void toListHelper(List<T> newList, Node<T> branch){
-        if(branch==null){
-            return;
+        if(branch != null){
+             toListHelper(newList, branch.left);
+            newList.add(branch.value); 
+            toListHelper(newList, branch.right);
         }
-        toListHelper(newList, branch.left);
-        newList.add(branch.value); 
-        toListHelper(newList, branch.right);
     }
     
     /**
@@ -173,15 +165,8 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      */
     public List<T> toList() {
         List<T> newList = new ArrayList<>();
-        if(root == null){
-            return null;
-        }
-        else{
-            toListHelper(newList, root.left);
-            newList.add(root.value);
-            toListHelper(newList, root.right);
-            return newList;
-        }
+        toListHelper(newList, root);
+        return newList;
     }
 
     ///// Part 3: BST Sorting

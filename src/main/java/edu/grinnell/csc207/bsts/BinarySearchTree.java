@@ -123,15 +123,15 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 
     ///// Part 2: Ordered Traversals
 
-    public void toStringHelper(Node<T> node, StringBuffer buf){
-       if (node != null) {
-            toStringHelper(node.left, buf);
-            if(buf.toString().length() > 1){
-                buf.append(", ");
-            }
-            buf.append(node.value);
-            toStringHelper(node.right, buf);
+    public void StrHelper(StringBuffer newBuf, Node<T> branch){
+        if(branch==null){
+            return;
         }
+
+        StrHelper(newBuf, branch.left);
+        newBuf.append(branch.value); 
+        StrHelper(newBuf, branch.right);
+        
     }
 
     /**
@@ -141,23 +141,36 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      */
     @Override
     public String toString() {
-        if(root != null){
-            StringBuffer buf = new StringBuffer("[");
-            toStringHelper(root, buf);
-            buf.append("]");
-            return buf.toString();
-        } else{return "[]";}
+        StringBuffer newBuf = new StringBuffer("[");
+        if(root == null){
+            return "[]";
+        }
+        else{
+            StrHelper(newBuf, root.left);
+            newBuf.append(root.value);
+            StrHelper(newBuf, root.right);
+
+            String string = newBuf.toString();
+            int num = string.length()-1;
+            String newString ="";
+            newString += "[";
+            for (int i = 1; i < num; i++) {
+                newString += string.charAt(i) + ", ";
+            }
+            newString += string.charAt(string.length ()-1);
+            newString += "]";
+            return newString;
+        }
     }
 
 
-
-
     public void toListHelper(List<T> newList, Node<T> branch){
-        if(branch != null){
-             toListHelper(newList, branch.left);
-            newList.add(branch.value); 
-            toListHelper(newList, branch.right);
+        if(branch==null){
+            return;
         }
+        toListHelper(newList, branch.left);
+        newList.add(branch.value); 
+        toListHelper(newList, branch.right);
     }
     
     /**
@@ -165,8 +178,15 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      */
     public List<T> toList() {
         List<T> newList = new ArrayList<>();
-        toListHelper(newList, root);
-        return newList;
+        if(root == null){
+            return null;
+        }
+        else{
+            toListHelper(newList, root.left);
+            newList.add(root.value);
+            toListHelper(newList, root.right);
+            return newList;
+        }
     }
 
     ///// Part 3: BST Sorting
@@ -175,28 +195,64 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      * @param <T> the carrier type of the lists
      * @param lst the list to sort
      * @return a copy of <code>lst</code> but sorted
-     * @implSpec <code>sort</code> runs in ___ time if the tree remains balanced. 
+     * @implSpec <code>sort</code> runs in O(n) time if the tree remains balanced. 
      */
     public static <T extends Comparable<? super T>> List<T> sort(List<T> lst) {
-        throw new UnsupportedOperationException();
+        BinarySearchTree<T> tree = new BinarySearchTree<>();
+        for (int i=0; i<lst.size(); i++) {
+            tree.insert(lst.get(i));
+        }
+        return tree.toList();
     }
-
-    ///// Part 4: Deletion
-  
-    /*
-     * The three cases of deletion are:
-     * 1. (TODO: fill me in!)
-     * 2. (TODO: fill me in!)
-     * 3. (TOOD: fill me in!)
-     */
 
     /**
      * Modifies the tree by deleting the first occurrence of <code>value</code> found
      * in the tree.
      *
      * @param value the value to delete
+     * 
+     * The three cases of deletion are:
+     * 1. Nothing on the tree
+     * 2. The value we want to remove has just a left or just a right branch, so we just replace it with the value of its branch
+     * 3. We have both branches, we replace the value with the value of its right branch
      */
+
+     public void deleteHelper(T v, Node<T> branch, Node<T> previous) {
+        if (branch == null) {
+            return;
+        } else if (v == branch.value) {
+
+            if ((branch.right == null) && (branch.left != null)) {
+                branch = branch.left;
+            }  else if ((branch.right != null) && (branch.left == null)) {
+                branch = branch.right;
+            } else if ((branch.right == null) && (branch.left == null)) {
+                previous.right = null; // .
+            } else {
+                Node<T> tempLeft = branch.left;
+                branch  = branch.right;
+                branch.left = tempLeft;
+            }
+        } else {
+            if (v.compareTo(branch.value) < 0) {
+                deleteHelper(v, branch.left, branch);
+            } else {
+                deleteHelper(v, branch.right, branch);
+            }
+        }
+    }
+    
     public void delete(T value) {
-        throw new UnsupportedOperationException();
+        if (root != null) {
+            if (root.value == value) {
+                Node<T> tempLeft = root.left;
+                root  = root.right;
+                root.left = tempLeft;
+            }
+            deleteHelper(value, root.left, root);
+            deleteHelper(value, root.right, root);
+            
+
+        }
     }
 }
